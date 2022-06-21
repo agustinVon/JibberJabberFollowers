@@ -1,6 +1,7 @@
 package com.agustinvon.jibberjabberfollowers.controller;
 
 import com.agustinvon.jibberjabberfollowers.model.Follow;
+import com.agustinvon.jibberjabberfollowers.model.dto.FollowResponse;
 import com.agustinvon.jibberjabberfollowers.service.FollowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("*")
+@RequestMapping("/follow")
 public class FollowController {
 
     private final FollowService followService;
@@ -33,7 +34,7 @@ public class FollowController {
     }
 
     @GetMapping
-    public List<Follow> getAllFollowedUsers(Principal principal) {
-        return followService.findUserFollows(principal.getName());
+    public ResponseEntity<FollowResponse> getAllFollowedUsers(Principal principal) {
+        return ResponseEntity.ok(new FollowResponse(followService.findUserFollows(principal.getName())));
     }
 }
