@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  api:
+    container_name: "jibberjabber-followers"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: follower-db2
+      DB_PORT: 5432
+      KEYCLOAK_HOST: keycloak2
+      KEYCLOAK_PORT: 8080
+
+  follower-db2:
+    container_name: follower-db2
+    image: postgres:12
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: sa
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: jibberjabber-db
+
+  keycloak2:
+    image: quay.io/keycloak/keycloak:18.0.0
+    container_name: keycloak2
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=postgres
+      - KC_DB_URL_HOST=keycloakdb
+      - KC_DB_URL_DATABASE=pgdb
+      - KC_DB_USERNAME=sa
+      - KC_DB_PASSWORD=password
+    ports:
+      - "8080:8080"
+    command: start-dev
+    depends_on:
+      - db-keycloak
+    healthcheck:
+      test: "curl -f http://localhost:8080/admin || exit 1"
+
+  db-keycloak:
+    image: postgres:12
+    container_name: keycloakdb
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: sa
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pgdb

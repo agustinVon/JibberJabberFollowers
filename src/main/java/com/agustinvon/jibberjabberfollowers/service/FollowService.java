@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class FollowService {
@@ -22,17 +23,23 @@ public class FollowService {
     }
 
     public void followUser(String name, String username) {
-        if (followRepository.findFirstByMainUserAndFollowedUser(name, username) != null) throw new AlreadyFollowedException("User is already followed");
+        if (followRepository.findFirstByMainUserAndFollowedUser(name, username).isPresent()) throw new AlreadyFollowedException("User is already followed");
         followRepository.save(new Follow(name, username));
     }
 
     public void unfollowUser(String name, String username) {
-        Follow follow = followRepository.findFirstByMainUserAndFollowedUser(name, username);
-        if (follow == null) throw new NoSuchElementException();
-        followRepository.deleteById(follow.getId());
+        Optional<Follow> follow = followRepository.findFirstByMainUserAndFollowedUser(name, username);
+        followRepository.deleteById(follow.orElseThrow(NoSuchElementException::new).getId());
     }
 
     public List<Follow> findUserFollows(String name) {
         return followRepository.findAllByMainUser(name);
     }
+
+    public Boolean isFollowedByID(String followerName, String followedName){
+        Optional<Follow> follow = followRepository.findFirstByMainUserAndFollowedUser(followerName, followedName);
+        return follow.isPresent();
+    }
+
+
 }
