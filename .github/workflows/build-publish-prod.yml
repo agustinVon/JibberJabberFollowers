@@ -94,6 +94,6 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             cd JibberJabberCompose
-            docker compose stop posts-service
-            docker compose pull posts-service
-            docker compose up -d posts-service
+            docker compose stop followers-service
+            docker compose pull followers-service
+            docker compose up -d followers-service
