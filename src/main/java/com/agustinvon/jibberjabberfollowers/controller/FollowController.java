@@ -37,6 +37,7 @@ public class FollowController {
     public ResponseEntity<FollowResponse> getAllFollowedUsers(Principal principal) {
         return ResponseEntity.ok(new FollowResponse(followService.findUserFollows(principal.getName())));
     }
+    // test
 
     @GetMapping("/{username}")
     public ResponseEntity<Boolean> isFollowingByID(@PathVariable String username, Principal principal) {
