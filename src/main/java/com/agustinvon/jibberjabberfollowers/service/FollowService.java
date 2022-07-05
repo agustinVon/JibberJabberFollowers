@@ -23,7 +23,7 @@ public class FollowService {
     }
 
     public void followUser(String name, String username) {
-        if (followRepository.findFirstByMainUserAndFollowedUser(name, username) != null) throw new AlreadyFollowedException("User is already followed");
+        if (followRepository.findFirstByMainUserAndFollowedUser(name, username).isPresent()) throw new AlreadyFollowedException("User is already followed");
         followRepository.save(new Follow(name, username));
     }
 
